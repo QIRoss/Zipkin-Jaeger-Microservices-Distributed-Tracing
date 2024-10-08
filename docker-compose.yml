@@ -1,0 +1,80 @@
+services:
+  user_service:
+    build: ./services/user_service
+    container_name: user_service
+    ports:
+      - "8001:8001"
+    networks:
+      - microservices
+    environment:
+      - DATABASE_URL=postgresql://user:password@user_db/userdb
+    depends_on:
+      - user_db
+
+  order_service:
+    build: ./services/order_service
+    container_name: order_service
+    ports:
+      - "8002:8002"
+    networks:
+      - microservices
+    environment:
+      - DATABASE_URL=mongodb://order_db:27017/orderdb
+    depends_on:
+      - order_db
+
+  payment_service:
+    build: ./services/payment_service
+    container_name: payment_service
+    ports:
+      - "8003:8003"
+    networks:
+      - microservices
+
+  user_db:
+    image: postgres:13
+    container_name: user_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: userdb
+    volumes:
+      - user_data:/var/lib/postgresql/data
+      - ./services/user_service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices
+
+  order_db:
+    image: postgres:13
+    container_name: order_db
+    environment:
+      POSTGRES_USER: order_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: orderdb
+    volumes:
+      - order_data:/var/lib/postgresql/data
+      - ./services/order_service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices
+
+  payment_db:
+    image: postgres:13
+    container_name: payment_db
+    environment:
+      POSTGRES_USER: payment_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: paymentdb
+    volumes:
+      - payment_data:/var/lib/postgresql/data
+      - ./services/payment_service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    driver: bridge
+
+volumes:
+  user_data:
+  order_data:
+  payment_data:

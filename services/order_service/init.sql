@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    quantity INTEGER NOT NULL
+);
