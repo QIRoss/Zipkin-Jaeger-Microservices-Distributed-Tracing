@@ -22,6 +22,15 @@ This project demonstrates the implementation of distributed tracing in a microse
 
 - **OpenTelemetry**: OpenTelemetry is an observability framework for cloud-native software that provides a collection of APIs and tools for generating, collecting, and exporting traces, metrics, and logs. In this project, OpenTelemetry is used to instrument FastAPI services, enabling the trace data to be sent to either Zipkin or Jaeger.
 
+### Distributed Tracing Setup
+In this project, order_service is configured to use Zipkin for distributed tracing, while user_service and payment_service are both configured to use Jaeger. This allows us to compare and contrast the performance of two popular distributed tracing systems, as well as monitor service-to-service communication in a real-world microservice environment.
+
+* Order Service (Zipkin): All trace data from the order service is sent to Zipkin, which collects and visualizes the spans related to the order processing lifecycle.
+
+* User Service & Payment Service (Jaeger): The user and payment services send their trace data to Jaeger, giving insight into user registration, payments, and the interaction between these services. Using OpenTelemetry for instrumentation, we ensure that every request and database interaction is tracked and visualized in Jaeger.
+
+This mixed approach demonstrates how different services in the same architecture can use distinct tracing tools, providing flexibility in observability setups depending on the needs of the organization or team.
+
 ### Docker Setup
 
 The project consists of three FastAPI microservices: **user_service**, **order_service**, and **payment_service**. These services are instrumented with OpenTelemetry for distributed tracing. The tracing data is sent to **Zipkin** or **Jaeger**, depending on the service configuration.
