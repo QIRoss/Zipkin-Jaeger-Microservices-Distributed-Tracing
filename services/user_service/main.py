@@ -1,8 +1,28 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import psycopg2
+import os
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 
 app = FastAPI()
+
+jaeger_host = os.getenv("JAEGER_HOST", "localhost")
+jaeger_exporter = JaegerExporter(
+    agent_host_name=jaeger_host,
+    agent_port=6831
+)
+
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+
+span_processor = BatchSpanProcessor(jaeger_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+FastAPIInstrumentor.instrument_app(app)
 
 class User(BaseModel):
     username: str

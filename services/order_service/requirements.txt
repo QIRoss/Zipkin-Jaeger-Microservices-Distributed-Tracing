@@ -1,3 +1,6 @@
 fastapi
 uvicorn
 psycopg2-binary
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-exporter-zipkin
